@@ -62,5 +62,14 @@ func fetchBibtex(ctx context.Context, rfc string) ([]byte, error) {
 }
 
 func fetchJson(ctx context.Context, rfc string) ([]byte, error) {
-	return fetch(ctx, "https://datatracker.ietf.org/doc/"+rfc+"/doc.json")
+	resp, err := fetch(ctx, "https://datatracker.ietf.org/doc/"+rfc+"/doc.json")
+	if err != nil {
+		return nil, err
+	}
+	return ParseJsonResponse(rfc, resp)
+}
+
+func FetchJSON(rfc string) ([]byte, error) {
+	ctx := context.Background()
+	return fetchJson(ctx, rfc)
 }

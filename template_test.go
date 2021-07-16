@@ -51,7 +51,7 @@ func TestJsonDate_MarshalJSON(t *testing.T) {
 
 func TestCreateEntry(t *testing.T) {
 	type args struct {
-		n int
+		n string
 		b []byte
 	}
 	tests := []struct {
@@ -63,7 +63,7 @@ func TestCreateEntry(t *testing.T) {
 		{
 			name: "rfc8000",
 			args: args{
-				n: 8000,
+				n: "8000",
 				b: []byte(`
 {
 	"name": "draft-ietf-nfsv4-multi-domain-fs-reqs",
@@ -202,7 +202,7 @@ func TestCreateEntry(t *testing.T) {
 			`),
 			},
 			want: &RfcEntry{
-				Number: 8000,
+				Number: "8000",
 				Authors: []Author{
 					{
 						Name:        "Andy Adamson",

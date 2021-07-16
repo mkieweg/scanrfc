@@ -1,10 +1,27 @@
 package scanrfc
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"strings"
+	"text/template"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
+
+var t *template.Template
+var writer io.Writer
+
+func init() {
+	t = template.New("rfc")
+	t := t.Delims("<<", ">>")
+	_, err := t.Parse(entry)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 const entry = `
 @misc{rfc<< .Number >>,
@@ -14,7 +31,7 @@ const entry = `
 	publisher =	{RFC Editor},
 	doi =		{10.17487/RFC<< .Number >>},
 	url =		{https://rfc-editor.org/rfc/rfc<< .Number >>.txt},
-        author =	{<<range $element := .Authors>> <<$element.Name>> <<end>>},
+        author =	{<<range $element := .Authors>><<$element.Name>> <<end>>},
 	title =		{{<< .Title >>}},
 	pagetotal =	<< .Pages >>,
 	year =		<< .Year >>,
@@ -30,7 +47,7 @@ type Author struct {
 }
 
 type RfcEntry struct {
-	Number   int
+	Number   string
 	Authors  []Author `json:"authors"`
 	Title    string   `json:"title"`
 	Pages    int      `json:"pages"`
@@ -58,7 +75,7 @@ func (j JsonDate) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j)
 }
 
-func CreateEntry(n int, b []byte) (*RfcEntry, error) {
+func CreateEntry(n string, b []byte) (*RfcEntry, error) {
 	entry := &RfcEntry{
 		Date: JsonDate{},
 	}
@@ -70,4 +87,18 @@ func CreateEntry(n int, b []byte) (*RfcEntry, error) {
 	entry.Month = date.Month().String()
 	entry.Number = n
 	return entry, nil
+}
+
+func ParseJsonResponse(rfc string, resp []byte) ([]byte, error) {
+	n := strings.Trim(rfc, "rfc")
+	out := bytes.NewBuffer(make([]byte, 0))
+	writer = out
+	e, err := CreateEntry(n, resp)
+	if err != nil {
+		return nil, err
+	}
+	if err := t.Execute(writer, e); err != nil {
+		return nil, err
+	}
+	return out.Bytes(), nil
 }
