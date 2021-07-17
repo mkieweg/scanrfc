@@ -28,11 +28,13 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
+
 package cmd
 
 import (
-	"fmt"
+	log "github.com/sirupsen/logrus"
 
+	"github.com/mkieweg/scanrfc"
 	"github.com/spf13/cobra"
 )
 
@@ -40,14 +42,15 @@ import (
 var scanCmd = &cobra.Command{
 	Use:   "scan",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("scan called")
+		rfcs, err := scanrfc.Scan(args[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := scanrfc.WriteFile(scanrfc.FetchRFC(rfcs...)); err != nil {
+			log.Error(err)
+		}
 	},
 }
 
