@@ -35,7 +35,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mkieweg/scanrfc"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -48,17 +47,12 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "rfc",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-
-	Run: func(cmd *cobra.Command, args []string) {
-		log.Info(scanrfc.FetchRFC(args...))
-	},
+	Short: "Scans a directory for citation keys containing RFCs and builds a bib file",
+	Long: `
+ScanRFC is a CLI application that allows you to scan files for 
+certain citation keys (pandoc-citeproc and Tex) for RFCs 
+(eg. @rfc6020) and generate a bib file containing respective
+entries taken from the IETF datatracker.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
