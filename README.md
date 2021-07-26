@@ -1,6 +1,6 @@
 # scanrfc - Generate .bib files for IETF RFCs
 
-While writing my thesis I needes something to quickly fetch bibliography information for IETF RFCs. Since I didn't find a solution that worked for me, I built one. Here it is.
+While writing my thesis I needed something to quickly fetch bibliography information for IETF RFCs. Since I didn't find a solution that worked for me, I built one. Here it is.
 
 ```sh
 $ rfc scan example
