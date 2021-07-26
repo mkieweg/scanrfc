@@ -60,3 +60,7 @@ $ rfc fetch rfc1337
         abstract =      {This note describes some theoretically-possible failure modes for TCP connections and discusses possible remedies. In particular, one very simple fix is identified. This memo provides information for the Internet community. It does not specify an Internet standard.},
 }
 ```
+
+## Configutaion
+
+The output file is saved as `rfc.bib` to the current working directory. If a `.scanrfc.yaml` file is found in either the user's home directory or in the working directory is is used by `scanrfc`. The output directory can be configured using this file and the `bib-file` key.
