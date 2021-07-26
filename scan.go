@@ -12,8 +12,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const regex = "(@rfc[[:digit:]]+|{rfc[[:digit:]]+)"
+
 func Scan(path string) ([]string, error) {
-	files, err := searchMarkdownFiles(path)
+	files, err := searchFiles(path)
 	if err != nil {
 		return nil, err
 	}
@@ -31,11 +33,11 @@ func Scan(path string) ([]string, error) {
 	return out, err
 }
 
-func searchMarkdownFiles(path string) ([]string, error) {
+func searchFiles(path string) ([]string, error) {
 	files := make([]string, 0)
 	if err := filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
 		filename := d.Name()
-		if strings.Contains(filename, ".md") {
+		if strings.Contains(filename, ".md") || strings.Contains(filename, ".tex") {
 			file := filepath.Join(path)
 			log.Debug(file)
 			files = append(files, file)
@@ -58,7 +60,7 @@ func scanFile(path string, rfcs map[string]bool) error {
 	}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		re := regexp.MustCompile("@rfc[[:digit:]]+")
+		re := regexp.MustCompile(string(regex))
 		matches = append(matches, re.FindAll([]byte(scanner.Text()), -1)...)
 	}
 	for _, match := range matches {
